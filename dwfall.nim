@@ -1,6 +1,6 @@
 # dwfall.nim
 
-import os, strutils
+import os, strutils, parseopt
 
 # Defaults
 var whitespace: int = 4
@@ -12,13 +12,72 @@ var comment_body_str: string = " * "
 var comment_start_str: string = "/* "
 var comment_end_str: string = " */"
 
-
+let param_count = paramCount()
 # Check if at least one argument is given
-if paramCount() < 1:
+if param_count < 1:
     echo "Usage: dwfall \"label text\""
     quit(1)
 
 let label_text: string = paramStr(1)
+
+
+# Override defaults with user input
+if param_count > 2:
+    echo "checking params"
+    echo "param count: " & $param_count
+    for param_index in 2..<param_count:
+        let arg = paramStr(param_index)
+
+        if arg == "--borderh":
+            # set horizontal border size. min 1 max 10
+
+            if param_index + 1 <= param_count:
+                let borderh_val: string = paramStr(param_index + 1)
+                try:
+                    var num = borderh_val.parseInt()
+                    if num < 1:
+                        num =1
+                    elif num > 10:
+                        num = 10
+                        echo "borderh max 10"
+                    horz_border_units = num
+                except:
+                    echo "cannot parse borderh to int"
+        elif arg == "--borderv":
+            # set vertical border size. min 1 max 5
+            if param_index + 1 <= param_count:
+                let borderv_val: string = paramStr(param_index + 1)
+                try:
+                    var num = borderv_val.parseInt()
+                    if num < 1:
+                        num =1
+                    elif num > 5:
+                        num = 5
+                        echo "borderv max 5"
+                    vert_border_units = num
+                except:
+                    echo "cannot parse borderv to int"
+        elif arg == "--borderchar":
+            # set vertical border size. min 1 max 10
+            if param_index + 1 <= param_count:
+                let border_char_str = paramStr(param_index + 1)
+                if border_char_str.len > 0:
+                    border_char = border_char_str[0]
+        elif arg == "--whitespace":
+            # set whitespace. min 0 max 10
+            if param_index + 1 <= param_count:
+                let whitespace_str = paramStr(param_index + 1)
+                try:
+                    var num = whitespace_str.parseInt()
+                    if num < 0:
+                        num =0
+                    elif num > 10:
+                        num = 10
+                        echo "whitespace max 10"
+                    whitespace = num
+                except:
+                    echo "cannot parse whitespace to int"
+
 
 # create the template for the layers of border sitting above the label
 let top_border_width: int = label_text.len + (horz_border_units * 2) + 4
@@ -46,8 +105,6 @@ gap_str.add(horz_border_str)
 
 let label_string: string = comment_body_str & horz_border_str & "  " & label_text & "  " & horz_border_str
 
-# TO DO: get args adjusting whitespace and vert_border_units, to change the number of strings to print.
-# TO DO: adjust the style (c-style is default. Allow for python, lua, whatever)
 
 # emtpy sequence of strings
 var strings: seq[string] = @[]
