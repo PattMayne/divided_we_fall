@@ -29,7 +29,7 @@ if param_count > 2:
         let arg = paramStr(param_index)
 
         if arg == "--borderh":
-            # set horizontal border size. min 1 max 10
+            # set horizontal border size. min 1 max 15
 
             if param_index + 1 <= param_count:
                 let borderh_val: string = paramStr(param_index + 1)
@@ -37,23 +37,23 @@ if param_count > 2:
                     var num = borderh_val.parseInt()
                     if num < 1:
                         num =1
-                    elif num > 10:
-                        num = 10
-                        echo "borderh max 10"
+                    elif num > 15:
+                        num = 15
+                        echo "borderh max 15"
                     horz_border_units = num
                 except:
                     echo "cannot parse borderh to int"
         elif arg == "--borderv":
-            # set vertical border size. min 1 max 5
+            # set vertical border size. min 1 max 10
             if param_index + 1 <= param_count:
                 let borderv_val: string = paramStr(param_index + 1)
                 try:
                     var num = borderv_val.parseInt()
                     if num < 1:
                         num =1
-                    elif num > 5:
-                        num = 5
-                        echo "borderv max 5"
+                    elif num > 10:
+                        num = 10
+                        echo "borderv max 10"
                     vert_border_units = num
                 except:
                     echo "cannot parse borderv to int"
@@ -73,7 +73,7 @@ if param_count > 2:
                         num =0
                     elif num > 10:
                         num = 10
-                        echo "whitespace max 10"
+                        echo "whitespace max 15"
                     whitespace = num
                 except:
                     echo "cannot parse whitespace to int"
