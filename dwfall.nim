@@ -2,6 +2,13 @@
 
 import os, strutils, parseopt
 
+# forward declarations
+proc print_help()
+let params = commandLineParams()
+if params.contains("--help") or params.contains("-h"):
+  print_help()
+  quit() # Exit after showing help
+
 # Objects and Enums
 
 type Styles = enum
@@ -22,10 +29,10 @@ type StyleData = object
         last: string
 
 
-proc new_style_data(start_s: string, body_s: string, end_s: string): StyleData = 
-    result.first = start_s
+proc new_style_data(first_s: string, body_s: string, last_s: string): StyleData = 
+    result.first = first_s
     result.body = body_s
-    result.last = end_s
+    result.last = last_s
 
 
 proc get_style_from_input(input: string): StyleData =
@@ -49,7 +56,12 @@ proc get_style_from_input(input: string): StyleData =
     of $OCaml:
         result = new_style_data("(* ", " * ", " *)")
     else:
-        result = new_style_data("/* ", " * ", " */")
+        let err_string: string = input & " is not a valid input for --style. See --help for input options chart."
+        echo " "
+        echo err_string
+        echo " "
+        quit()
+        #result = new_style_data("/* ", " * ", " */")
 
 
 
@@ -72,10 +84,8 @@ let label_text: string = paramStr(1)
 
 # Override defaults with user input
 if param_count > 2:
-    echo "checking params"
-    echo "param count: " & $param_count
     for param_index in 2..<param_count:
-        let arg = paramStr(param_index)
+        let arg = paramStr(param_index).toLowerAscii()
 
         if arg == "--borderh":
             # set horizontal border size. min 1 max 15
@@ -149,7 +159,6 @@ for i in 1..top_border_width:
 # create gap string (the string between the label and the borders)
 var gap_str: string = ""
 gap_str.add(style_data.body)
-
 gap_str.add(horz_border_str)
 
 for i in 1..(label_text.len + 4):
@@ -158,7 +167,6 @@ for i in 1..(label_text.len + 4):
 gap_str.add(horz_border_str)
 
 let label_string: string = style_data.body & horz_border_str & "  " & label_text & "  " & horz_border_str
-
 
 # emtpy sequence of strings
 var strings: seq[string] = @[]
@@ -200,3 +208,29 @@ for i in 0..<strings.len:
 # TO DO: make a help output for the --help flag
 # TO DO: versions and a --version output
 
+proc print_help() =
+      echo """
+This program prints a label within
+Usage: dwfall "label to print" [options]
+Options:
+  -h, --help    Show this help message
+  -v, --version Show version
+  --borderh <integer>       border width
+  --borderv <integer>       border height
+  --whtiespace <integer>    blank space above/below borders
+  --borderchar <char>       character used for border
+  --style <language>        comment syntax. See chart below.
+
+    STYLE OPTIONS CHART:
+    
+    INPUT:  : OTHER LANGS COVERED
+    html    : xml
+    c       : Rust, C++, CSS, C#, SQL, JavaScipt, Java, Swift, Odin
+    lisp    : Clojure, Scheme
+    lua
+    hash    : bash, ruby, python
+    haskell
+    zig
+    ocaml
+    nim
+"""

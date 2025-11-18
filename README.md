@@ -5,5 +5,4 @@ It won't make ASCII art. Just a simple label surrounded by a border of character
 Takes arguments to change border thickness, amount of whitespace, border character, and comments style (based on language)
 
 ## TO BE ADDED
-* help
 * version
