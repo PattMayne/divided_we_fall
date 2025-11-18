@@ -76,7 +76,7 @@ var border_char: char = '='
 let param_count = paramCount()
 # Check if at least one argument is given
 if param_count < 1:
-    echo "Usage: dwfall \"label text\""
+    echo "Usage: dwfall \"label text\" [options] (see --help for more details)"
     quit(1)
 
 let label_text: string = paramStr(1)
