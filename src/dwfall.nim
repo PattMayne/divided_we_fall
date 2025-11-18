@@ -1,6 +1,6 @@
 # dwfall.nim
 
-import os, strutils, parseopt
+import os, strutils
 
 # forward declarations
 proc print_help()
@@ -210,7 +210,8 @@ for i in 0..<strings.len:
 
 proc print_help() =
       echo """
-This program prints a label within
+This program prints a divider label with adjustable params.
+
 Usage: dwfall "label to print" [options]
 Options:
   -h, --help    Show this help message
