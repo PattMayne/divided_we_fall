@@ -6,27 +6,27 @@ import os, strutils
 proc print_help()
 let params = commandLineParams()
 if params.contains("--help") or params.contains("-h"):
-  print_help()
-  quit() # Exit after showing help
+    print_help()
+    quit() # Exit after showing help
 
 # Objects and Enums
 
 type Styles = enum
-        C = "c",
-        Hash = "hash",
-        Lisp = "lisp",
-        Lua = "lua",
-        HTML = "html",
-        Nim = "nim",
-        Zig = "zig",
-        OCaml = "ocaml"
-        Haskell = "haskell"
+    C = "c",
+    Hash = "hash",
+    Lisp = "lisp",
+    Lua = "lua",
+    HTML = "html",
+    Nim = "nim",
+    Zig = "zig",
+    OCaml = "ocaml"
+    Haskell = "haskell"
 
 
 type StyleData = object
-        first: string
-        body: string
-        last: string
+    first: string
+    body: string
+    last: string
 
 
 proc new_style_data(first_s: string, body_s: string, last_s: string): StyleData = 
@@ -61,8 +61,6 @@ proc get_style_from_input(input: string): StyleData =
         echo err_string
         echo " "
         quit()
-        #result = new_style_data("/* ", " * ", " */")
-
 
 
 # Defaults
