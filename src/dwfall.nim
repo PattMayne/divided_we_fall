@@ -1,6 +1,6 @@
 # dwfall.nim
 
-import os, strutils
+import os, strutils, tables
 
 # forward declarations
 proc print_help()
@@ -11,6 +11,7 @@ if params.contains("--help") or params.contains("-h"):
 
 # Objects and Enums
 
+# The main representative language strings
 type Styles = enum
     C = "c",
     Hash = "hash",
@@ -23,20 +24,45 @@ type Styles = enum
     Haskell = "haskell"
 
 
+# Which strings mark the beginning of the multi-line comment style,
+# the body of the continuing multi-line comment,
+# and the closing of the multi-line comment.
 type StyleData = object
     first: string
     body: string
     last: string
 
 
+# constructor for the StyleData object
 proc new_style_data(first_s: string, body_s: string, last_s: string): StyleData = 
     result.first = first_s
     result.body = body_s
     result.last = last_s
 
 
+
+# Allow the user to enter a broad range of language inputs, but reduce them to representative lang string
+proc reduce_to_category(word: string): string =
+    let word = word.toLower()
+    if word in ["rust", "c++", "css", "c#", "sql", "javascript", "java", "swift", "odin", "c"]:
+        return "c"
+    elif word in ["clojure", "scheme", "lisp"]:
+        return "lisp"
+    elif word in ["bash", "ruby", "python", "hash"]:
+        return "hash"
+    elif word in ["xml", "html"]:
+        return "html"
+    else:
+        return word
+
+
+# Takes a representative language string,
+# maps it only the string of the Styles enums,
+# and returns a style object so we can build multi-line comments for that language.
 proc get_style_from_input(input: string): StyleData =
-    case input
+    let reduced_input = reduce_to_category(input)
+    echo(reduced_input)
+    case reduced_input
     of $C:
         result = new_style_data("/* ", " * ", " */")
     of $Hash:
@@ -63,7 +89,7 @@ proc get_style_from_input(input: string): StyleData =
         quit()
 
 
-# Defaults
+# Defaults styles
 var whitespace: int = 4
 var vert_border_units: int = 2
 var horz_border_units: int = 5
@@ -137,7 +163,7 @@ if param_count > 2:
         elif arg == "--style":
             # match it to one of the style enums, which match to prefab style obejcts
             if param_index + 1 <= param_count:
-                let style_input_str = paramStr(param_index + 1)
+                let style_input_str = reduce_to_category(paramStr(param_index + 1))
                 style_data = get_style_from_input(style_input_str)
 
 
@@ -233,3 +259,5 @@ Options:
     ocaml
     nim
 """
+
+
