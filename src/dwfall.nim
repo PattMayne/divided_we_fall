@@ -1,6 +1,6 @@
 # dwfall.nim
 
-import os, strutils, tables
+import os, strutils
 
 # forward declarations
 proc print_help()
@@ -40,17 +40,23 @@ proc new_style_data(first_s: string, body_s: string, last_s: string): StyleData 
     result.last = last_s
 
 
+# categories of styles for reference and reduction
+let c_styles = ["rust", "c++", "css", "c#", "sql", "javascript", "java", "swift", "odin", "c"]
+let lisp_styles = ["clojure", "scheme", "lisp"]
+let hash_styles = ["bash", "ruby", "python", "hash"]
+let html_styles = ["xml", "html"]
+
 
 # Allow the user to enter a broad range of language inputs, but reduce them to representative lang string
 proc reduce_to_category(word: string): string =
     let word = word.toLower()
-    if word in ["rust", "c++", "css", "c#", "sql", "javascript", "java", "swift", "odin", "c"]:
+    if word in c_styles:
         return "c"
-    elif word in ["clojure", "scheme", "lisp"]:
+    elif word in lisp_styles:
         return "lisp"
-    elif word in ["bash", "ruby", "python", "hash"]:
+    elif word in hash_styles:
         return "hash"
-    elif word in ["xml", "html"]:
+    elif word in html_styles:
         return "html"
     else:
         return word
