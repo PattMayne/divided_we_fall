@@ -1,15 +1,56 @@
 # dwfall.nim
 
+ #[ 
+ # 
+ # 
+ # 
+ # 
+ # =============================
+ # =============================
+ # =====                   =====
+ # =====  DIVIDED WE FALL  =====
+ # =====                   =====
+ # =============================
+ # =============================
+ # 
+ # 
+ # A script to generate divider labels (such as the one just above)
+ # 
+ # 
+ # 
+]#
+
 import os, strutils
 
-# forward declarations
+
+ #[ 
+ # ======================================
+ # =======                        =======
+ # =======  FORWARD DECLARATIONS  =======
+ # =======                        =======
+ # ======================================
+]#
+
 proc print_help()
+proc set_borderh(param_index: int)
+proc set_borderv(param_index: int)
+proc set_whitespace(param_index: int)
+proc set_borderchar(param_index: int)
+proc set_lang_style(param_index: int)
 let params = commandLineParams()
 if params.contains("--help") or params.contains("-h"):
     print_help()
     quit() # Exit after showing help
 
-# Objects and Enums
+
+ #[ 
+ # ===================================================
+ # =======                                     =======
+ # =======  OBJECTS, ENUMS, & SUPPORTED LANGS  =======
+ # =======                                     =======
+ # ===================================================
+]#
+
 
 # The main representative language strings
 type Styles = enum
@@ -47,7 +88,8 @@ let hash_styles = ["bash", "ruby", "python", "hash"]
 let html_styles = ["xml", "html"]
 
 
-# Allow the user to enter a broad range of language inputs, but reduce them to representative lang string
+# Allow the user to enter a broad range of language inputs,
+# but reduce them to representative lang string (from Styles enum)
 proc reduce_to_category(word: string): string =
     let word = word.toLower()
     if word in c_styles:
@@ -67,10 +109,9 @@ proc reduce_to_category(word: string): string =
 # and returns a style object so we can build multi-line comments for that language.
 proc get_style_from_input(input: string): StyleData =
     let reduced_input = reduce_to_category(input)
-    echo(reduced_input)
     case reduced_input
     of $C:
-        result = new_style_data("/* ", " * ", " */")
+        result = new_style_data("/* ", " * ", "*/")
     of $Hash:
         result = new_style_data("# ", "# ", "# ")
     of $Lisp:
@@ -95,7 +136,15 @@ proc get_style_from_input(input: string): StyleData =
         quit()
 
 
-# Defaults styles
+ #[ 
+ # ssssssssssssssssssssssssssssssss
+ # sssssss                  sssssss
+ # sssssss  DEFAULT STYLES  sssssss
+ # sssssss                  sssssss
+ # ssssssssssssssssssssssssssssssss
+]#
+
+
 var whitespace: int = 4
 var vert_border_units: int = 2
 var horz_border_units: int = 5
@@ -103,74 +152,114 @@ var horz_border_units: int = 5
 var style_data = get_style_from_input("c")
 var border_char: char = '='
 
+
+
+ #[ 
+ # ====================================
+ # =======                      =======
+ # =======  PROCESS USER INPUT  =======
+ # =======                      =======
+ # ====================================
+]#
+
+
 let param_count = paramCount()
 # Check if at least one argument is given
 if param_count < 1:
     echo "Usage: dwfall \"label text\" [options] (see --help for more details)"
     quit(1)
 
+# Label text must always be the first param
 let label_text: string = paramStr(1)
 
-
-# Override defaults with user input
+# Override defaults with user input (starting after label param)
 if param_count > 2:
     for param_index in 2..<param_count:
         let arg = paramStr(param_index).toLowerAscii()
 
         if arg == "--borderh":
-            # set horizontal border size. min 1 max 15
-
-            if param_index + 1 <= param_count:
-                let borderh_val: string = paramStr(param_index + 1)
-                try:
-                    var num = borderh_val.parseInt()
-                    if num < 1:
-                        num =1
-                    elif num > 15:
-                        num = 15
-                        echo "borderh max 15"
-                    horz_border_units = num
-                except:
-                    echo "cannot parse borderh to int"
+            set_borderh(param_index)
         elif arg == "--borderv":
-            # set vertical border size. min 1 max 10
-            if param_index + 1 <= param_count:
-                let borderv_val: string = paramStr(param_index + 1)
-                try:
-                    var num = borderv_val.parseInt()
-                    if num < 1:
-                        num =1
-                    elif num > 10:
-                        num = 10
-                        echo "borderv max 10"
-                    vert_border_units = num
-                except:
-                    echo "cannot parse borderv to int"
+            set_borderv(param_index)
         elif arg == "--borderchar":
-            # set vertical border size. min 1 max 10
-            if param_index + 1 <= param_count:
-                let border_char_str = paramStr(param_index + 1)
-                if border_char_str.len > 0:
-                    border_char = border_char_str[0]
+            set_borderchar(param_index)
         elif arg == "--whitespace":
-            # set whitespace. min 0 max 10
-            if param_index + 1 <= param_count:
-                let whitespace_str = paramStr(param_index + 1)
-                try:
-                    var num = whitespace_str.parseInt()
-                    if num < 0:
-                        num =0
-                    elif num > 10:
-                        num = 10
-                        echo "whitespace max 15"
-                    whitespace = num
-                except:
-                    echo "cannot parse whitespace to int"
+            set_whitespace(param_index)
         elif arg == "--style":
-            # match it to one of the style enums, which match to prefab style obejcts
-            if param_index + 1 <= param_count:
-                let style_input_str = reduce_to_category(paramStr(param_index + 1))
-                style_data = get_style_from_input(style_input_str)
+            set_lang_style(param_index)
+
+
+# set horizontal border size. min 1 max 15
+proc set_borderh(param_index: int) =
+    if param_index + 1 <= param_count:
+        let borderh_val: string = paramStr(param_index + 1)
+        try:
+            var num = borderh_val.parseInt()
+            if num < 1:
+                num =1
+            elif num > 15:
+                num = 15
+                echo "borderh max 15"
+            horz_border_units = num
+        except:
+            echo "cannot parse borderh to int"
+
+
+# set vertical border size. min 1 max 10
+proc set_borderv(param_index: int) =
+    if param_index + 1 <= param_count:
+        let borderv_val: string = paramStr(param_index + 1)
+        try:
+            var num = borderv_val.parseInt()
+            if num < 1:
+                num =1
+            elif num > 10:
+                num = 10
+                echo "borderv max 10"
+            vert_border_units = num
+        except:
+            echo "cannot parse borderv to int"
+
+
+
+# set whitespace. min 0 max 10
+proc set_whitespace(param_index: int) =
+    if param_index + 1 <= param_count:
+        let whitespace_str = paramStr(param_index + 1)
+        try:
+            var num = whitespace_str.parseInt()
+            if num < 0:
+                num =0
+            elif num > 10:
+                num = 10
+                echo "whitespace max 15"
+            whitespace = num
+        except:
+            echo "cannot parse whitespace to int"
+
+
+# set vertical border size. min 1 max 10
+proc set_borderchar(param_index: int) =
+    if param_index + 1 <= param_count:
+        let border_char_str = paramStr(param_index + 1)
+        if border_char_str.len > 0:
+            border_char = border_char_str[0]
+
+
+# match it to one of the style enums, which match to prefab style obejcts
+proc set_lang_style(param_index: int) =
+    if param_index + 1 <= param_count:
+        let style_input_str = reduce_to_category(paramStr(param_index + 1))
+        style_data = get_style_from_input(style_input_str)
+
+
+ #[ 
+ # ==================================
+ # =======                    =======
+ # =======  BUILD THE OUTPUT  =======
+ # =======                    =======
+ # ==================================
+]#
 
 
 # create the template for the layers of border sitting above the label
@@ -230,12 +319,22 @@ for i in 1..whitespace:
 # end the multi-line comment
 strings.add(style_data.last)
 
-# now print it all out
+
+ #[ 
+ # ==================================
+ # =======                    =======
+ # =======  PRINT THE OUTPUT  =======
+ # =======                    =======
+ # ==================================
+]#
 
 for i in 0..<strings.len:
     echo strings[i]
 
-# TO DO: make a help output for the --help flag
+
+
+
+
 # TO DO: versions and a --version output
 
 proc print_help() =
