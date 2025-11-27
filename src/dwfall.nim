@@ -21,7 +21,7 @@
 ]#
 
 import os, strutils
-
+const AppVersion* = "0.3.7"
 
  #[ 
  # ======================================
@@ -31,6 +31,7 @@ import os, strutils
  # ======================================
 ]#
 
+proc print_version()
 proc print_help()
 proc set_borderh(param_index: int)
 proc set_borderv(param_index: int)
@@ -38,9 +39,12 @@ proc set_whitespace(param_index: int)
 proc set_borderchar(param_index: int)
 proc set_lang_style(param_index: int)
 let params = commandLineParams()
-if params.contains("--help") or params.contains("-h"):
+if params.contains("--help") or params.contains("-H"):
     print_help()
     quit() # Exit after showing help
+elif params.contains("--version") or params.contains("-V"):
+    print_version()
+    quit()
 
 
  #[ 
@@ -332,10 +336,9 @@ for i in 0..<strings.len:
     echo strings[i]
 
 
+proc print_version() =
+    echo "Divided We Fall version ", AppVersion
 
-
-
-# TO DO: versions and a --version output
 
 proc print_help() =
       echo """
