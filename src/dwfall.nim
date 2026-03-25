@@ -14,14 +14,14 @@
  # =============================
  # 
  # 
- # A script to generate divider labels (such as the one just above)
+ # A script to generate divider labels (like this one)
  # 
  # 
  # 
 ]#
 
 import os, strutils
-const AppVersion* = "0.3.7"
+const AppVersion* = "1.0.0.0.0"
 
  #[ 
  # ======================================
@@ -76,7 +76,6 @@ type StyleData = object
     first: string
     body: string
     last: string
-
 
 # constructor for the StyleData object
 proc new_style_data(first_s: string, body_s: string, last_s: string): StyleData = 
@@ -337,7 +336,7 @@ for i in 0..<strings.len:
 
 
 proc print_version() =
-    echo "Divided We Fall version ", AppVersion
+    echo "v", AppVersion
 
 
 proc print_help() =
