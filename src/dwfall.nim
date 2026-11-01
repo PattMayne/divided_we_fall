@@ -349,7 +349,7 @@ Options:
   -v, --version Show version
   --borderh <integer>       border width
   --borderv <integer>       border height
-  --whtiespace <integer>    blank space above/below borders
+  --whitespace <integer>    blank space above/below borders
   --borderchar <char>       character used for border
   --style <language>        comment syntax. See chart below.
 
